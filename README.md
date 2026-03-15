@@ -17,6 +17,6 @@ api = FBI(api_key = your_api_key)
 metadata = api.get_metadata(state_abbr = "all")
 
 # ORI stands for Originating Agency Identifer (ORI), uniquely identifying the law enforcement
-agencies that report to the FBI. The ORIs in a state can be extracted from api.get_metadata().
+# agencies that report to the FBI. The ORIs in a state can be extracted from api.get_metadata().
 crime_statistics = api.get_crime_statistics(ori = "ILCPD0000", year = 2024, offense = "Violent Crimes")
 ```
