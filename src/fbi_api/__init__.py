@@ -1,1 +1,1 @@
-from .core import FBIAPI
+from .core import FBI

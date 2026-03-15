@@ -1,0 +1,54 @@
+{
+  "LEE": [
+    {
+      "ori": "IL0520200",
+      "counties": "LEE",
+      "is_nibrs": true,
+      "latitude": 41.713726,
+      "longitude": -89.33026,
+      "state_abbr": "IL",
+      "state_name": "Illinois",
+      "agency_name": "Amboy Police Department",
+      "agency_type_name": "City",
+      "nibrs_start_date": "2022-12-01"
+    },
+    {
+      "ori": "IL0520400",
+      "counties": "LEE",
+      "is_nibrs": false,
+      "latitude": 41.747442,
+      "longitude": -89.299351,
+      "state_abbr": "IL",
+      "state_name": "Illinois",
+      "agency_name": "Franklin Grove Police Department",
+      "agency_type_name": "City",
+      "nibrs_start_date": null
+    }
+  ],
+  "BOND": [
+    {
+      "ori": "IL0030300",
+      "counties": "BOND",
+      "is_nibrs": false,
+      "latitude": 38.885924,
+      "longitude": -89.436592,
+      "state_abbr": "IL",
+      "state_name": "Illinois",
+      "agency_name": "Sorento Police Department",
+      "agency_type_name": "City",
+      "nibrs_start_date": null
+    },
+    {
+      "ori": "IL0030100",
+      "counties": "BOND",
+      "is_nibrs": true,
+      "latitude": 38.889313,
+      "longitude": -89.41342,
+      "state_abbr": "IL",
+      "state_name": "Illinois",
+      "agency_name": "Greenville Police Department",
+      "agency_type_name": "City",
+      "nibrs_start_date": "2022-01-01"
+    }
+  ]
+}
