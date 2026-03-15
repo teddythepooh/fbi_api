@@ -1,10 +1,10 @@
-name: Chicago Crime Statistics
+name: NYC Crime Statistics
 
 on:
   workflow_dispatch:
 
 jobs:
-  get_chicago_crime_statistics:
+  crime_statistics:
     runs-on: ubuntu-latest
 
     steps:
@@ -36,7 +36,7 @@ jobs:
 
           api = FBI()
           result = api.get_crime_statistics(
-              ori = "ILCPD0000",
+              ori = "NY0303000",
               year = 2024,
               offense = "Violent Crimes"
           )
@@ -46,5 +46,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: chicago
-          path: crime_statistics.csv
+          name: nyc
+          path: nyc_statistics.csv

@@ -3,10 +3,7 @@ The underlying API calls in get_metadata() and get_crime_statistics() return nes
 that they are correctly parsed to a tabular format.
 '''
 import json
-import pytest
 from pathlib import Path
-
-from fbi_api import FBI
 
 def load_mock_json(file: str):
     try:
@@ -17,10 +14,6 @@ def load_mock_json(file: str):
 
 MOCK_RESPONSE_GET_METADATA = load_mock_json("mock_response_get_metadata.json")
 MOCK_RESPONSE_GET_CRIME_STATISTICS = load_mock_json("mock_response_get_crime_statistics.json")
-
-@pytest.fixture(scope = "module")
-def fbi_client():
-    return FBI()
 
 def test_get_metadata(fbi_client, mocker):
     mocker.patch.object(fbi_client, "get", return_value = MOCK_RESPONSE_GET_METADATA)
