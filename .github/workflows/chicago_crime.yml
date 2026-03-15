@@ -1,0 +1,50 @@
+name: Chicago Crime Statistics
+
+on:
+  workflow_dispatch:
+
+jobs:
+  get_chicago_crime_statistics:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable_cache: true
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --locked --dev
+
+      - name: Get Chicago crime statistics
+        env:
+          FBI_API_KEY: ${{ secrets.FBI_API_KEY }}
+        run: |
+          #uv venv
+          source .venv/bin/activate
+          #uv pip install -e .
+          
+          python - <<'EOF'
+          from fbi_api import FBI
+
+          api = FBI()
+          result = api.get_crime_statistics(
+              ori = "ILCPD0000",
+              year = 2024,
+              offense = "Violent Crimes"
+          )
+          result.to_csv("crime_statistics.csv", index = False)
+          EOF
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: chicago
+          path: crime_statistics.csv
