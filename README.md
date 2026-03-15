@@ -20,3 +20,5 @@ metadata = api.get_metadata(state_abbr = "all")
 # agencies that report to the FBI. The ORIs in a state can be extracted from api.get_metadata().
 crime_statistics = api.get_crime_statistics(ori = "ILCPD0000", year = 2024, offense = "Violent Crimes")
 ```
+
+Alternatively, to see what `get_crime_statistics()` looks like for Chicago, go to GitHub Actions. Under `Actions` -> `Chicago Crime Statistics`, click any successful workflow (marked with a check); then, export the `chicago` artifact at the bottom. You should see a `chicago.zip` file in your device.
