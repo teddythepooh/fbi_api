@@ -1,5 +1,5 @@
 '''
-The underlying API calls in get_metadata() and get_crime_statistics() return nested JSON objects. The tests below verify 
+The underlying API calls in get_metadata() and get_crime_statistics() return nested JSON objects. These tests verify 
 that they are correctly parsed to a tabular format.
 '''
 import json

@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: uv sync --locked --dev
 
-      - name: Get Chicago crime statistics
+      - name: Get NYC crime statistics
         env:
           FBI_API_KEY: ${{ secrets.FBI_API_KEY }}
         run: |
@@ -47,4 +47,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: nyc
-          path: nyc_statistics.csv
+          path: crime_statistics.csv
