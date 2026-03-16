@@ -7,7 +7,7 @@ packages = ["src/fbi_api"]
 
 [project]
 name = "fbi-data-api"
-version = "0.3.0"
+version = "0.4.0"
 authors = [
   { name="Ted Jesus C. Chua", email="chuatedjesusc@gmail.com" },
 ]
