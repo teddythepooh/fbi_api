@@ -7,7 +7,7 @@ packages = ["src/fbi_api"]
 
 [project]
 name = "fbi-data-api"
-version = "0.4.0"
+version = "0.5.0"
 authors = [
   { name="Ted Jesus C. Chua", email="chuatedjesusc@gmail.com" },
 ]
@@ -26,6 +26,7 @@ license-files = ["LICEN[CS]E*"]
 
 [dependency-groups]
 dev = [
+    "ipykernel>=7.2.0",
     "pytest>=9.0.2",
     "pytest-mock>=3.15.1",
 ]
