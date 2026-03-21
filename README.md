@@ -16,6 +16,9 @@ api = FBI(api_key = your_api_key)
 
 metadata = api.get_metadata(state_abbr = "all") 
 
+# number of sworn and non-sworn officers and the total population they serve
+agency_metrics = api.get_agency_metrics(ori = "NY0303000", year = 2024)
+
 crime_statistics = api.get_crime_statistics(ori = "NY0303000", year = 2024, offense = "Violent Crimes")
 ```
 To see `fbi-data-api` in action, go to the repo's `examples` directory:

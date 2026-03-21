@@ -45,7 +45,7 @@ class FBI:
 
     def _validate_api_config(self) -> None:
         '''
-        Validates API configuration parameters.
+        Validates configuration parameters.
         '''
         if not self.timeout_limit > 0 or not self.max_retries > 0:
             raise ValueError("timeout_limit and max_retries should be greater than 0.")
@@ -56,7 +56,7 @@ class FBI:
     def _build_session(self) -> requests.Session:
         '''
         Instantiates requests session. The API call is retried up to self.max_retries times if status code is in 
-        FBI.status_code_forcelist. The delay between retries is exponential by a factor of self.exponential_delay_factor.
+        FBI.status_code_forcelist. The delay between retries is exponential by a factor of exponential_delay_factor.
         '''
         session = requests.Session()
         retry = Retry(
@@ -75,7 +75,16 @@ class FBI:
     @staticmethod
     def get_offenses() -> dict:
         return FBI.config["offenses"]
-        
+    
+    @staticmethod
+    def _agency_metrics_column_mapping() -> dict:
+        return {
+            "Male Officers": "num_male_officers",
+            "Female Officers": "num_female_officers",
+            "Male Civilians": "num_male_civilians",
+            "Female Civilians": "num_female_civilians",
+        }
+
     def _get_api_key(self) -> str:
         return os.getenv("FBI_API_KEY", default = self.api_key)
     
@@ -135,36 +144,48 @@ class FBI:
         else:
             return self._oris_by_state(state_abbr)
     
-    def _get_stats(self, ori: str, year: int, offense: str) -> pd.DataFrame:
+    def _get_crime_statistics(self, ori: str, year: int, offense: str) -> pd.DataFrame:
         try:
             offense_mapping = FBI.get_offenses()[offense]
-            api_call = self.get(
-                f"{FBI.base_url}/summarized/agency/{ori}/{offense_mapping}?from=01-{year}&to=12-{year}"
-            )
+            api_call = self.get(f"{FBI.base_url}/summarized/agency/{ori}/{offense_mapping}?from=01-{year}&to=12-{year}")
         except KeyError:
             raise KeyError(f"Valid offenses to pass are {', '.join(list(FBI.get_offenses().keys()))}.")
 
-        last_refresh_date = api_call["cde_properties"]["last_refresh_date"]["UCR"]
-
         _, first_value = next(iter(api_call["offenses"]["actuals"].items()))
 
-        crime_statistics = pd.Series(first_value, name = "count").rename_axis("date").reset_index()
-
-        month_year_columns = ["month", "year"]
-        crime_statistics[month_year_columns] = crime_statistics["date"].str.split("-", expand = True)
-        crime_statistics.drop(columns = "date", inplace = True)
-
-        crime_statistics["ori"] = ori
-        crime_statistics["offense"] = offense
-        crime_statistics["last_refresh_date"] = last_refresh_date
-
-        for col in month_year_columns:
-            crime_statistics[col] = crime_statistics[col].astype(int)
-
-        crime_statistics.sort_values(by = month_year_columns, inplace = True)
-
-        return crime_statistics[["ori", "month", "year", "offense", "count", "last_refresh_date"]]
-
+        crime_statistics = (
+            pd.Series(first_value, name = "count")
+            .rename_axis("date")
+            .reset_index()
+            .assign(
+                ori = ori,
+                month = lambda df: df["date"].str.split("-").str[0].astype(int),
+                year = lambda df: df["date"].str.split("-").str[1].astype(int),
+                offense = offense,
+                last_refresh_date = api_call["cde_properties"]["last_refresh_date"]["UCR"],
+            )
+        )
+        
+        return crime_statistics
+        
+    def _get_agency_metrics(self, ori: str, year: int) -> pd.DataFrame:
+        api_call = self.get(f"{FBI.base_url}/pe/{ori[:2]}/{ori}?from={year}&to={year}")
+        
+        agency_metrics = (
+            pd.DataFrame(api_call["actuals"])
+            .rename_axis("year")
+            .reset_index()
+            .assign(
+                ori = ori,
+                year = year,
+                population = api_call["populations"]["Participated Population"][str(year)],
+                last_refresh_date = api_call["cde_properties"]["last_refresh_date"]["UCR"]
+                )
+            .rename(columns = FBI._agency_metrics_column_mapping())
+            )
+        
+        return agency_metrics
+    
     def get_crime_statistics(self, 
                              ori: str | list, 
                              year: int | list, 
@@ -174,7 +195,7 @@ class FBI:
         year: The year or list of years.
         offense: Offense or list of offenses. To see all valid offenses, do FBI.get_offenses().
 
-        Extracts monthly crime statistics.
+        Extracts monthly crime statistics reported by the police agency.
         '''
         combinations = list(itertools.product(
             ori if isinstance(ori, list) else [ori], 
@@ -187,6 +208,42 @@ class FBI:
         results = []
 
         for o, y, off in tqdm(combinations):
-            results.append(self._get_stats(o, y, off))
+            results.append(self._get_crime_statistics(ori = o, year = y, offense = off))
 
-        return pd.concat(results, ignore_index = True)
+        return pd.concat(results, ignore_index = True)[
+            ["ori", 
+             "month", 
+             "year", 
+             "offense", 
+             "count", 
+             "last_refresh_date"]
+            ]
+    
+    def get_agency_metrics(self, 
+                           ori: str | list, 
+                           year: int | list) -> pd.DataFrame:
+        '''
+        ori: Originating agency identifier (ORI) or list of ORIs. To see all valid ORIs, do get_metadata("all").
+        year: The year or list of years.
+        
+        Extracts the number of sworn and non-sworn officers in the police agency (and the total population they serve).
+        '''
+        combinations = list(itertools.product(
+            ori if isinstance(ori, list) else [ori], 
+            year if isinstance(year, list) else [year],
+            )
+        )
+
+        print(f"Executing {len(combinations)} quer{'y' if len(combinations) == 1 else 'ies'}...")
+        results = []
+        
+        for o, y in tqdm(combinations):
+            results.append(self._get_agency_metrics(ori = o, year = y))
+
+        return pd.concat(results, ignore_index = True)[
+            ["ori", 
+            "year", 
+            "population",
+            *FBI._agency_metrics_column_mapping().values(),
+            "last_refresh_date"]
+            ]
