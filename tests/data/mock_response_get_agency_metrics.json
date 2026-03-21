@@ -1,0 +1,35 @@
+{
+  "rates": {
+    "Law Enforcement Employees per 1,000 People": {
+      "2024": 4.69
+    }
+  },
+  "actuals": {
+    "Male Officers": {
+      "2024": 8781
+    },
+    "Male Civilians": {
+      "2024": 307
+    },
+    "Female Officers": {
+      "2024": 2886
+    },
+    "Female Civilians": {
+      "2024": 396
+    }
+  },
+  "tooltips": null,
+  "populations": {
+    "Participated Population": {
+      "2024": 2638698
+    }
+  },
+  "cde_properties": {
+    "max_data_date": {
+      "UCR": "03/2026"
+    },
+    "last_refresh_date": {
+      "UCR": "03/15/2026"
+    }
+  }
+}

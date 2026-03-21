@@ -1,5 +1,5 @@
 '''
-The underlying API calls in get_metadata() and get_crime_statistics() return nested JSON objects. These tests verify 
+The underlying API calls in get_metadata(), get_crime_statistics(), and get_agency_metrics() return nested JSON objects. These tests verify 
 that they are correctly parsed to a tabular format.
 '''
 import json
@@ -14,6 +14,7 @@ def load_mock_json(file: str):
 
 MOCK_RESPONSE_GET_METADATA = load_mock_json("mock_response_get_metadata.json")
 MOCK_RESPONSE_GET_CRIME_STATISTICS = load_mock_json("mock_response_get_crime_statistics.json")
+MOCK_RESPONSE_GET_AGENCY_METRICS = load_mock_json("mock_response_get_agency_metrics.json")
 
 def test_get_metadata(fbi_client, mocker):
     mocker.patch.object(fbi_client, "get", return_value = MOCK_RESPONSE_GET_METADATA)
@@ -50,3 +51,18 @@ def test_get_crime_statistics(fbi_client, mocker):
         }
     
     assert len(crime_statistics) > 0
+    
+def test_get_agency_metrics(fbi_client, mocker):
+    mocker.patch.object(fbi_client, "get", return_value = MOCK_RESPONSE_GET_AGENCY_METRICS)
+
+    agency_metrics = fbi_client.get_agency_metrics(ori = "ILCPD0000", year = 2024)
+
+    assert set(agency_metrics.columns) == {
+        "ori",
+        "year",
+        "population",
+        *fbi_client._agency_metrics_column_mapping().values(),
+        "last_refresh_date"
+        }
+    
+    assert len(agency_metrics) > 0
