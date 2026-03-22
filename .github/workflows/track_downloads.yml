@@ -17,16 +17,12 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: true
-
       - name: Fetch downloads from previous day
         run: |
-          uv venv --python 3.12
+          python3 -m venv .venv
           source .venv/bin/activate
-          uv add "pypistats==1.13.0"
+          pip install pypistats==1.13.0
+          echo "using $(python --version)"
           python ad_hoc/track_downloads.py
 
       - name: Update downloads.json
