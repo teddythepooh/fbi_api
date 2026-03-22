@@ -1,6 +1,6 @@
 '''
-Tracks cumulative downloads of fbi-data-api, designed to be run on GitHub Actions every day 
-to update running total in ./downloads.json.
+Tracks cumulative downloads of fbi-data-api, designed to be run on GitHub Actions every day to update 
+running total in ./downloads.json. Locally, run this script from this project's root directory.
 '''
 import json
 import sys
