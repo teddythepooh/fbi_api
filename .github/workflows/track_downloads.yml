@@ -1,0 +1,35 @@
+name: Track PyPI Downloads
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  track-downloads:
+    name: Track Downloads
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Fetch downloads from previous day
+        run: |
+          uv venv --python 3.12
+          source .venv/bin/activate
+          uv add "pypistats==1.13.0"
+          python track_downloads.py
+
+      - name: Commit updated downloads.json to repo
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: updated running total of PyPi downloads in downloads.json
+          branch: main
