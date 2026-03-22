@@ -1,8 +1,16 @@
+# Runs the test suite when changes are pushed to main.
 name: Tests
 
 on:
   push:
-    branches: [main]
+    branches: 
+      - main
+    paths:
+      - src/**
+      - tests/**
+      - examples/**
+      - pyproject.toml
+      - uv.lock
   workflow_dispatch:
 
 jobs:

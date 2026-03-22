@@ -1,3 +1,4 @@
+# A test run of fbi-data-api in editable mode, simply querying NYC's violent crime statistics and exporting it to .csv.
 name: NYC Crime Statistics
 
 on:
