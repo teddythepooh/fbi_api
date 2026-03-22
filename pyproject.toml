@@ -16,6 +16,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "pandas>=3.0.1",
+    "pypistats==1.13.0",
     "python-dotenv>=1.2.2",
     "pyyaml>=6.0.3",
     "requests>=2.32.5",
