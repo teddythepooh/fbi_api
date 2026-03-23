@@ -12,16 +12,17 @@ PACKAGE = "fbi-data-api"
 STATE_FILE = Path("./downloads.json")
 
 def fetch_total_downloads() -> int:
-    df = pypistats.overall(PACKAGE, mirrors = False, format = "pandas")
+    query = pypistats.overall(PACKAGE, mirrors = False, format = "json")
     
-    return int(df.loc[df["category"] == "without_mirrors", "downloads"].iloc[0])
+    return int(json.loads(query)["data"][0]["downloads"])
 
 def fetch_downloads() -> dict:
-    data = pypistats.recent(PACKAGE, format = "pandas")
-    row = data.iloc[0]
+    query = pypistats.recent(PACKAGE, format = "json")
+    downloads = json.loads(query)["data"]
+    
     return {
-        "last_day": int(row["last_day"]),
-        "last_month": int(row["last_month"]),
+        "last_day": int(downloads["last_day"]),
+        "last_month": int(downloads["last_month"]),
     }
 
 def load_state() -> dict:
