@@ -21,7 +21,7 @@ def main():
     }
 
     STATE_FILE.write_text(json.dumps(state, indent = 2) + "\n")
-    print(f"{PACKAGE} has {total:,} total downloads. Written to {STATE_FILE}.")
+    print(f"fbi-data-api has {total:,} total downloads. Written to {STATE_FILE}.")
 
 
 if __name__ == "__main__":
