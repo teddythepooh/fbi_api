@@ -189,11 +189,13 @@ class FBI:
     def get_crime_statistics(self, 
                              ori: str | list, 
                              year: int | list, 
-                             offense: str | list) -> pd.DataFrame:
+                             offense: str | list,
+                             flag_anomalies_with_ai: bool = False) -> pd.DataFrame:
         '''
         ori: Originating agency identifier (ORI) or list of ORIs. To see all valid ORIs, do get_metadata("all").
         year: The year or list of years.
         offense: Offense or list of offenses. To see all valid offenses, do FBI.get_offenses().
+        flag_anomalies_with_ai: Whether to run AI-powered anomaly detection to flag suspicious counts.
 
         Extracts monthly crime statistics reported by the police agency.
         '''
@@ -209,8 +211,8 @@ class FBI:
 
         for o, y, off in tqdm(combinations):
             results.append(self._get_crime_statistics(ori = o, year = y, offense = off))
-
-        return pd.concat(results, ignore_index = True)[
+        
+        results_out = pd.concat(results, ignore_index = True)[
             ["ori", 
              "month", 
              "year", 
@@ -218,6 +220,12 @@ class FBI:
              "count", 
              "last_refresh_date"]
             ]
+        
+        if flag_anomalies_with_ai:
+            from .ai import AnomalyDetection
+            AnomalyDetection().flag_anomalies_with_ai(results_out)
+
+        return results_out
     
     def get_agency_metrics(self, 
                            ori: str | list, 
