@@ -1,4 +1,4 @@
-# Updates downloads.json's total_downloads key to account for previous day's downloads of fbi-data-api from PyPi.
+# Updates downloads.json's total_downloads key to track this package's impact.
 name: Track PyPI Downloads
 
 on:
