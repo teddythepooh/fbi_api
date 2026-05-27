@@ -19,6 +19,7 @@ jobs:
 
       - name: Fetch downloads from previous day
         run: |
+          git pull --rebase origin main
           python3 -m venv .venv
           source .venv/bin/activate
           pip install pypistats==1.13.0
